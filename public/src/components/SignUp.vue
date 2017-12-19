@@ -4,30 +4,35 @@
       <div class="col-md-4"></div>
       <div class="col-md-4">
         <form>
-          <div class="form-group">
+          <div class="form-group" :class="{'has-error': $v.firstName.$error }">
             <label for="firstName">First Name</label>
-            <input type="text" class="form-control" id="firstName" v-model.trim="firstName" placeholder="First Name">
+            <input type="text" class="form-control" id="firstName" v-model="firstName" @click="$v.firstName.$touch()"
+                   placeholder="First Name"/>
+            <p class="text-danger" v-if="$v.firstName.$error">First Name is required</p>
           </div>
-          <div class="form-group">
+          <div class="form-group" :class="{'has-error': $v.lastName.$error }">
             <label for="lastName">Last Name</label>
-            <input type="text" class="form-control" id="lastName" v-model.trim="lastName" placeholder="Last Name">
+            <input type="text" class="form-control" id="lastName" v-model.trim="lastName" @click="$v.lastName.$touch()"
+                   placeholder="Last Name"/>
+            <p class="text-danger" v-if="$v.lastName.$error">Last Name is required</p>
           </div>
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="text" class="form-control" id="phone" v-model.trim="phone" placeholder="Phone">
+          <div class="form-group" :class="{'has-error': $v.email.$error }">
+            <label class="control-label" for="email">Email</label>
+            <input v-model.trim="email" id="email" class="form-control" type="email" placeholder="Email"
+                   @click="$v.email.$touch()">
+            <p class="text-danger" v-if="!$v.email.required">Email is required</p>
+            <p class="text-danger" v-if="$v.email.required && !$v.email.email">Email is incorrect</p>
           </div>
-          <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" v-model.trim="email" placeholder="Email">
-          </div>
-          <div class="form-group">
+          <div class="form-group" :class="{'has-error': $v.password.$error }">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" v-model.trim="password" placeholder="Password">
+            <input type="password" class="form-control" id="password" v-model.trim="password"
+                   @click="$v.password.$touch()" placeholder="Password">
+            <p class="text-danger" v-if="$v.password.$error">Password is required</p>
           </div>
           <div class="alert alert-danger alert-dismissible" role="alert" v-if="error">
             <strong>Warning!</strong> {{ error }}.
           </div>
-          <button type="submit" v-on:click="signup" class="btn btn-default">Sign Up</button>
+          <button type="submit" :disabled="$v.$error" v-on:click="signup" class="btn btn-default">Sign Up</button>
         </form>
       </div>
       <div class="col-md-4"></div>
@@ -37,7 +42,7 @@
 
 <script>
   import Auth from '../auth'
-  import router from '../router'
+  import {required, email} from 'vuelidate/lib/validators'
 
   export default {
     name: 'SignUp',
@@ -47,21 +52,39 @@
         email: '',
         firstName: '',
         lastName: '',
-        phone: '',
         error: ''
+      }
+    },
+    validations: {
+      email: {
+        required,
+        email
+      },
+      firstName: {
+        required
+      },
+      lastName: {
+        required
+      },
+      password: {
+        required
       }
     },
     methods: {
       signup: function () {
+        this.$v.$touch()
+        if (this.$v.$error) {
+          return
+        }
+
         this.$http.post(this.$config.API + 'api/v1/auth/signup', {
           email: this.email,
           password: this.password,
           firstName: this.firstName,
-          lastName: this.lastName,
-          phone: this.phone
+          lastName: this.lastName
         }).then((response) => {
           Auth.login(response.body.authToken)
-          router.push('customers')
+          this.$router.push('/')
         }, (err) => {
           if (err) {
             console.log(err)

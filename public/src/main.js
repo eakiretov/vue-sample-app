@@ -5,6 +5,7 @@ import VueResource from 'vue-resource'
 import App from './App'
 import Auth from './auth'
 import router from './router'
+import Vuelidate from 'vuelidate'
 
 const vueConfig = require('vue-config')
 
@@ -23,6 +24,7 @@ const configs = {
 }
 
 Vue.use(VueResource)
+Vue.use(Vuelidate)
 Vue.use(vueConfig, configs)
 
 Vue.http.interceptors.push((request, next) => {

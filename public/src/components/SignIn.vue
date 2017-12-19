@@ -29,7 +29,6 @@
 
 <script>
   import Auth from '../auth'
-  import router from '../router'
 
   export default {
     name: 'SignIn',
@@ -47,7 +46,7 @@
           password: this.password
         }).then((response) => {
           Auth.login(response.body.authToken)
-          router.push('customers')
+          this.$router.push('/')
         }, (err) => {
           if (err) {
             console.log(err)

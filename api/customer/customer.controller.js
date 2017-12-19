@@ -4,18 +4,23 @@ var response = require('../../libs/response');
 var CustomerModel = require('./customer.model');
 
 module.exports.list = function (req, res) {
-    var query = {};
-    if (req.params.customerId) {
-        query = {
-            parents: {$in: [req.params.customerId]}
-        }
-    } else {
-        query = {
-            parents: {$size: 0}
-        }
-    }
+    return CustomerModel.findOne({_id: req.params.customerId || undefined})
+        .then(function (customer) {
+            var query = {};
+            if (customer) {
+                query = {
+                    user: req.user.userId,
+                    parents: {$size: customer.parents.length + 1, $in: [req.params.customerId]}
+                }
+            } else {
+                query = {
+                    user: req.user.userId,
+                    parents: {$size: 0}
+                }
+            }
 
-    return CustomerModel.find(query)
+            return CustomerModel.find(query);
+        })
         .then(response.list(res), response.error(res));
 };
 
@@ -27,6 +32,7 @@ module.exports.get = function (req, res) {
 module.exports.create = function (req, res) {
     return CustomerModel.findOne({_id: req.body.parent})
         .then(function (parent) {
+            req.body.user = req.user.userId;
             if (parent && parent.parents) {
                 req.body.parents = parent.parents;
                 req.body.parents.push(parent._id);

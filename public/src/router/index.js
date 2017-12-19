@@ -9,10 +9,10 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {path: '/customer/:customerId?', component: Customer, meta: {requiresAuth: true}},
-    {path: '/customer/:customerId', component: Customer, meta: {requiresAuth: true}},
     {path: '/signin', name: 'SignIn', component: SignIn},
     {path: '/signup', name: 'SignUp', component: SignUp},
-    {path: '/:customerId?', component: CustomerList, meta: {requiresAuth: true}},
+    {path: '/customer/create/:id?', name: 'create-customer', component: Customer, meta: {requiresAuth: true}},
+    {path: '/customer/:id?', name: 'edit-customer', component: Customer, meta: {requiresAuth: true}},
+    {path: '/:id?', name: 'list', component: CustomerList, meta: {requiresAuth: true}}
   ]
 })

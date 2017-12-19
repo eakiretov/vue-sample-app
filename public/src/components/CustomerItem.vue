@@ -1,10 +1,15 @@
 <template>
-  <div class="list-group" v-on:click="navigate">
-    <a href="#" class="list-group-item">
-      <h4 class="list-group-item-heading">{{ customer.firstName }} {{ customer.lastName }}</h4>
+  <div class="list-group">
+    <a href="javascript:void(0)" class="list-group-item">
+      <h4 class="list-group-item-heading">
+        <router-link :to="{ name: 'list', params: { id: customer.customerId }, query: { name: customer.firstName }}">{{
+          customer.firstName }} {{ customer.lastName }}
+        </router-link>
+      </h4>
       <div class="list-group-item-text">
         <div>Email: {{ customer.email }}</div>
         <div>Phone: {{ customer.phone }}</div>
+        <a href="#" v-on:click.prevent="edit">Edit</a>
         <a href="#" v-on:click.prevent="remove">Remove</a>
       </div>
     </a>
@@ -19,8 +24,8 @@
       remove: function () {
         this.$emit('remove')
       },
-      navigate: function () {
-        //   this.$emit('remove')
+      edit: function () {
+        this.$router.push({name: 'edit-customer', params: {id: this.customer.customerId}})
       }
     }
   }

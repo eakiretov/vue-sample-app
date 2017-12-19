@@ -11,4 +11,7 @@
 </script>
 
 <style>
+  .align-center {
+    text-align: center;
+  }
 </style>
