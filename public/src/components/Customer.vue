@@ -84,9 +84,6 @@
       },
       lastName: {
         required
-      },
-      phone: {
-        required
       }
     },
     methods: {
